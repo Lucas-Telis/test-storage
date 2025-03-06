@@ -33,13 +33,44 @@ const PRODUCTS = [
     precio: 79.99,
     categoria: 'Tecnología',
     img: 'https://shop.jvc.es/wp-content/uploads/2022/09/JVC_HA-A9T-B_Earbud.png'
+  },
+  {
+    id: 6,
+    nombre: 'Libro de ficción',
+    precio: 12.5,
+    categoria: 'Libros',
+    img: 'https://aliarediciones.es/wp-content/uploads/2019/07/Camino-entre-realidad-y-ficci%C3%B3n-600x600.png'
+  },
+  {
+    id: 7,
+    nombre: 'Reloj de pulsera',
+    precio: 99.5,
+    categoria: 'Accesorios',
+    img: 'https://www.navigil.com/wp-content/uploads/2019/05/5.png'
+  },
+  {
+    id: 8,
+    nombre: 'Mochila escolar',
+    precio: 24.99,
+    categoria: 'Accesorios',
+    img: 'https://kitstore.s8.cdn-upgates.com/_cache/d/8/d819390a04b4da3bc8d8b60e413eeafe-20214-2202.png'
+  },
+  {
+    id: 9,
+    nombre: 'Lámpara de escritorio',
+    precio: 34.99,
+    categoria: 'Hogar',
+    img: 'https://www.fluxs.es/wp-content/uploads/2021/11/Lampara-de-escritorio-LED-con-cargador-inalambrico-VELA.png'
+  },
+  {
+    id: 10,
+    nombre: 'Set de utensilios de cocina',
+    precio: 39.99,
+    categoria: 'Hogar',
+    img: 'https://www.bastilipo.com/wp-content/uploads/2018/12/Basilea.MAIN_.png.webp'
   }
 ]
 
-// Obtener carrito desde localStorage o crear uno vacío
-let carrito = JSON.parse(localStorage.getItem('carrito')) || []
-
-// 🛒 Función para imprimir productos en la página
 const printProductsContent = (products) => {
   const divContent = document.querySelector('.content')
   divContent.innerHTML = ''
@@ -53,15 +84,12 @@ const printProductsContent = (products) => {
     const cart = document.createElement('img')
 
     name.textContent = product.nombre
-    price.textContent = `$${product.precio}`
+    price.textContent = product.precio
     img.src = product.img
     divImg.classList.add('div-img')
     div.classList.add('product')
     cart.classList.add('cart-img')
     cart.src = 'https://cdn-icons-png.flaticon.com/512/5465/5465858.png'
-
-    // Añadir evento para agregar al carrito
-    cart.addEventListener('click', () => addToCart(product))
 
     div.append(cart)
     div.append(name)
@@ -74,63 +102,10 @@ const printProductsContent = (products) => {
 
 printProductsContent(PRODUCTS)
 
-// 🛍️ Función para agregar productos al carrito
-const addToCart = (product) => {
-  let found = carrito.find((item) => item.id === product.id)
+const carrito = document.querySelector('.carrito')
 
-  if (found) {
-    found.cantidad++
-  } else {
-    carrito.push({ ...product, cantidad: 1 })
-  }
+carrito.addEventListener('click', () => {
+  const cartDiv = document.querySelector('.cart')
 
-  updateCart()
-}
-
-// 🔄 Función para renderizar el carrito
-const updateCart = () => {
-  const cartDiv = document.querySelector('.cart-content')
-  cartDiv.innerHTML = ''
-
-  carrito.forEach((item, index) => {
-    const div = document.createElement('div')
-    div.classList.add('cart-item')
-    div.innerHTML = `
-      <p>${item.nombre} - $${item.precio} (x${item.cantidad})</p>
-      <button class="sumar" data-index="${index}">➕</button>
-      <button class="restar" data-index="${index}">➖</button>
-      <button class="eliminar" data-index="${index}">❌</button>
-    `
-
-    cartDiv.appendChild(div)
-  })
-
-  // Guardar carrito en localStorage
-  localStorage.setItem('carrito', JSON.stringify(carrito))
-}
-
-// 🗑️ Funcionalidad para sumar/restar/eliminar productos
-document.querySelector('.cart-content').addEventListener('click', (e) => {
-  const index = e.target.dataset.index
-
-  if (e.target.classList.contains('sumar')) {
-    carrito[index].cantidad++
-  } else if (e.target.classList.contains('restar')) {
-    carrito[index].cantidad--
-    if (carrito[index].cantidad === 0) {
-      carrito.splice(index, 1) // Eliminar si la cantidad es 0
-    }
-  } else if (e.target.classList.contains('eliminar')) {
-    carrito.splice(index, 1) // Eliminar producto
-  }
-
-  updateCart()
+  cartDiv.classList.toggle('openned')
 })
-
-// Mostrar u ocultar carrito al hacer clic
-document.querySelector('.carrito').addEventListener('click', () => {
-  document.querySelector('.cart').classList.toggle('openned')
-})
-
-// Renderizar carrito al cargar la página
-updateCart()
